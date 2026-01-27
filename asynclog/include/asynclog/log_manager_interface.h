@@ -1,8 +1,8 @@
 #ifndef MTLS_TUN_LOG_INTERFACE_H
 #define MTLS_TUN_LOG_INTERFACE_H
 
+#include <cstdint>
 #include <memory>
-#include <string>
 #include <string_view>
 
 namespace asynclog {
