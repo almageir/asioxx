@@ -1,14 +1,17 @@
-#include <asynclog/logger.h>
+#include <asynclog/global_logger.h>
 
 int main()
 {
-    asynclog::Logger::initialize();
-    asynclog::info("Starting", "main()");
-    asynclog::info("Hello World!", "main()");
-    asynclog::info("Finishing", "main()");
+    namespace  asl = asynclog;
+
+    asl::GlobalLogger::initialize(asl::LogMode::Console | asl::LogMode::File, "trace.log");
+
+    asl::info("Starting", "main()");
+    asl::info("Hello World!", "main()");
+    asl::info("Finishing", "main()");
 
     for (std::size_t i = 0; i < 100; ++i)
-        asynclog::debug(std::to_string(i), "main()");
+        asl::debug(std::to_string(i), "for circle");
 
     return 0;
 }

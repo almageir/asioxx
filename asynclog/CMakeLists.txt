@@ -7,23 +7,30 @@ add_library(asynclog::asynclog ALIAS asynclog)
 
 target_sources(asynclog
     PRIVATE
-        src/logger.cpp
+        src/global_logger.cpp
+        src/scoped_logger.cpp
         src/log_manager.cpp
-        src/log_provider.cpp
+        src/context_bound_log_backend.cpp
+        src/standalone_log_backend.cpp
+        src/logger_factory.cpp
 
     PUBLIC
         FILE_SET publicHeaders
         TYPE HEADERS
         FILES
-            include/asynclog/logger.h
+            include/asynclog/global_logger.h
+            include/asynclog/scoped_logger.h
+            include/asynclog/logger_factory.h
+            include/asynclog/log_manager.h
+            include/asynclog/log_manager_interface.h
 
     PRIVATE
         FILE_SET internalHeaders
         TYPE HEADERS
         FILES
-            include/asynclog/common.h
-            include/asynclog/log_manager.h
-            include/asynclog/log_provider.h
+            src/detail/log_backend_interface.h
+            src/detail/standalone_log_backend.h
+            src/detail/context_bound_log_backend.h
 )
 
 target_compile_features(asynclog PRIVATE cxx_std_17)
@@ -39,6 +46,8 @@ target_include_directories(asynclog
     PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:include/>
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
 include(GNUInstallDirs)

@@ -1,44 +1,32 @@
-#ifndef ASYNCLOG_LOG_MANAGER_H
-#define ASYNCLOG_LOG_MANAGER_H
+#ifndef ASYNCLOG_LOG_PROVIDER_H
+#define ASYNCLOG_LOG_PROVIDER_H
+
+#include "log_manager_interface.h"
 
 #include <memory>
-#include <string>
+#include <string_view>
 
-#include <asio/io_context.hpp>
-#include <asio/any_io_executor.hpp>
-#include <thread>
-
-namespace dataio {
-    class Sink;
+namespace asio {
+    class any_io_executor;
 }
 
 namespace asynclog
 {
-    using SinkPtr = std::shared_ptr<dataio::Sink>;
+    class LogBackendInterface;
 
-    class LogManager
+    class LogManager : public LogManagerInterface
     {
     public:
         LogManager();
-        ~LogManager();
-
-        void addSink(SinkPtr sink);
-        void push(const std::string& message) const;
-
-        LogManager(const LogManager&) = delete;
-        LogManager(LogManager&&) = delete;
-        LogManager& operator=(const LogManager&) = delete;
-        LogManager& operator=(LogManager&&) = delete;
-
-        asio::any_io_executor get_executor();
+        explicit LogManager(asio::any_io_executor executor);
+        ~LogManager() override;
+        void open(LogMode mode) override;
+        void open(LogMode mode, std::string_view path) override;
+        void write(std::string_view msg, MsgType type, std::string_view name) const override;
 
     private:
-        asio::io_context ioc_;
-        asio::executor_work_guard<asio::io_context::executor_type> idle_work_;
-        std::thread io_thread_;
-        std::vector<SinkPtr> sinks_;
+        std::unique_ptr<LogBackendInterface> log_backend_;
     };
 }
 
-
-#endif // ASYNCLOG_LOG_MANAGER_H
+#endif // ASYNCLOG_LOG_PROVIDER_H

@@ -15,8 +15,8 @@ namespace dataio
 {
     namespace net = asio;
 
-    FileSink::FileSink(net::any_io_executor executor, const std::string& path)
-        : file_{std::move(executor), path, open_flags}
+    FileSink::FileSink(const net::any_io_executor& executor, const std::string& path)
+        : file_{executor, path, open_flags}
     {}
 
     FileSink::~FileSink() {

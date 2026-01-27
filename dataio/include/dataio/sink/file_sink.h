@@ -15,7 +15,7 @@ namespace dataio
     class FileSink : public Sink
     {
     public:
-        explicit FileSink(asio::any_io_executor exec, const std::string& path);
+        explicit FileSink(const asio::any_io_executor& exec, const std::string& path);
         ~FileSink() override;
 
         bool write(std::string message) override;
