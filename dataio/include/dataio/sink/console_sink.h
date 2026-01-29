@@ -4,6 +4,9 @@
 #include "sink.h"
 
 #include <asio/any_io_executor.hpp>
+#ifdef __linux__
+#include <asio/posix/stream_descriptor.hpp>
+#endif
 
 #include <queue>
 #include <mutex>

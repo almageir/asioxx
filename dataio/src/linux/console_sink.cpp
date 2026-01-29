@@ -1,5 +1,8 @@
 #include <dataio/sink/console_sink.h>
 
+#include <asio/post.hpp>
+#include <asio/write.hpp>
+
 #include <unistd.h>
 
 namespace dataio {
