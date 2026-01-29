@@ -3,7 +3,8 @@
 
 #include "sink.h"
 
-#include <asio.hpp>
+#include <asio/any_io_executor.hpp>
+
 #include <queue>
 #include <mutex>
 #include <condition_variable>

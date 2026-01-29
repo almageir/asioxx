@@ -9,6 +9,7 @@
 #include <filesystem>
 #include <iomanip>
 #include <ctime>
+#include <sstream>
 
 namespace
 {
