@@ -1,3 +1,4 @@
+#include <iostream>
 #include <asynclog/logger_factory.h>
 
 namespace asynclog {
@@ -7,7 +8,10 @@ namespace asynclog {
     {
     }
 
-    ScopedLogger LoggerFactory::create(std::string_view name) const {
+    LoggerFactory::~LoggerFactory() = default;
+
+    ScopedLogger LoggerFactory::create(std::string_view name) const
+    {
         return {name, log_backend_};
     }
 }

@@ -6,7 +6,7 @@
 
 namespace dataio {
 
-    class Sink : public std::enable_shared_from_this<Sink> {
+    class Sink {
     public:
         virtual ~Sink() = default;
         virtual bool write(std::string message) = 0;

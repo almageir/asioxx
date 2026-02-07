@@ -27,7 +27,7 @@ namespace asynclog {
     void StandaloneLogBackend::push(const std::string &message) const
     {
         if (!message.empty())
-            for (auto &sink : sinks_)
+            for (const auto& sink : sinks_)
                 sink->write(message);
     }
 

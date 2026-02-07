@@ -12,6 +12,7 @@ namespace asynclog {
     class ScopedLogger {
     public:
         ScopedLogger(std::string_view source, std::shared_ptr<LogManagerInterface> backend);
+        ~ScopedLogger();
 
         ScopedLogger(const ScopedLogger&) = delete;
         ScopedLogger& operator=(const ScopedLogger&) = delete;

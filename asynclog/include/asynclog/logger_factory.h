@@ -12,6 +12,7 @@ namespace asynclog {
     class LoggerFactory {
     public:
         explicit LoggerFactory(std::shared_ptr<LogManagerInterface> log_backend);
+        ~LoggerFactory();
 
         [[nodiscard]] ScopedLogger create(std::string_view name) const;
 

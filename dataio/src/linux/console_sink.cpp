@@ -1,3 +1,4 @@
+#include <iostream>
 #include <dataio/sink/console_sink.h>
 
 #include <asio/post.hpp>
@@ -20,44 +21,48 @@ namespace dataio {
         is_stopped_ = true;
     }
 
+    std::shared_ptr<ConsoleSink> ConsoleSink::create(asio::any_io_executor executor) {
+        return std::shared_ptr<ConsoleSink>(new ConsoleSink(std::move(executor)));
+    }
+
     bool ConsoleSink::write(std::string buffer)
     {
         if (buffer.empty())
             return false;
 
-        net::post(
-            executor_,
-            [this, self{shared_from_this()}, buf = std::move(buffer)]() mutable {
-                do_write(std::move(buf));
-            });
+        auto self{shared_from_this()};
+
+        auto fn = [self, buffer = buffer]() mutable {
+            self->do_write(std::move(buffer));
+        };
+
+        net::post(executor_, std::move(fn));
 
         return true;
     }
 
     void ConsoleSink::handle_write_queue()
     {
-        if (is_stopped_ && handle_.is_open())
+        if (is_stopped_ || !handle_.is_open())
             return;
 
         if (write_queue_.empty())
             return;
 
         write_in_progress_ = true;
-
         const auto& buffer = write_queue_.front();
 
         net::async_write(
             handle_, net::buffer(buffer),
             [this, self{shared_from_this()}](const net::error_code& ec, std::size_t bytes_transferred) {
+                write_in_progress_ = false;
                 if (!ec) {
-                    write_in_progress_ = false;
                     write_queue_.pop();
                     if (!write_queue_.empty())
                         handle_write_queue();
                     else
                         cv_.notify_all();
                 } else {
-                    write_in_progress_ = false;
                     close();
                 }
             });
@@ -68,7 +73,7 @@ namespace dataio {
         if (is_stopped_)
             return;
 
-        write_queue_.emplace(std::move(buffer));
+        write_queue_.push(std::move(buffer));
 
         if (write_in_progress_)
             return;

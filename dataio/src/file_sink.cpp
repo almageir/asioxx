@@ -30,18 +30,20 @@ namespace dataio
         if (buffer.empty())
             return false;
 
-        net::post(
-            file_.get_executor(),
-            [this, self{shared_from_this()}, buf = std::move(buffer)]() mutable {
-                do_write(std::move(buf));
-            });
+        auto self{shared_from_this()};
+
+        auto fn = [self, buffer = buffer]() mutable {
+            self->do_write(std::move(buffer));
+        };
+
+        net::post(file_.get_executor(), std::move(fn));
 
         return true;
     }
 
     void FileSink::handle_write_queue()
     {
-        if (is_stopped_ && file_.is_open())
+        if (is_stopped_ || !file_.is_open())
             return;
 
         if (write_queue_.empty())
@@ -54,15 +56,14 @@ namespace dataio
         net::async_write(
             file_, net::buffer(buffer),
             [this, self{shared_from_this()}](const net::error_code& ec, std::size_t bytes_transferred) {
+                write_in_progress_ = false;
                 if (!ec) {
-                    write_in_progress_ = false;
                     write_queue_.pop();
                     if (!write_queue_.empty())
                         handle_write_queue();
                     else
                         cv_.notify_all();
                 } else {
-                    write_in_progress_ = false;
                     close();
                 }
             });

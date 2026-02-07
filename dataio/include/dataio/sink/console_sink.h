@@ -19,15 +19,24 @@ namespace dataio {
     using console_handle = asio::posix::stream_descriptor;
 #endif
 
-    class ConsoleSink : public Sink
+    class ConsoleSink final
+        : public Sink
+        , public std::enable_shared_from_this<ConsoleSink>
     {
     public:
-        explicit ConsoleSink(asio::any_io_executor exec);
         ~ConsoleSink() override;
+
+        static std::shared_ptr<ConsoleSink> create(asio::any_io_executor executor);
+
+        ConsoleSink(const ConsoleSink&) = delete;
+        ConsoleSink& operator=(const ConsoleSink&) = delete;
 
         bool write(std::string message) override;
 
     private:
+        std::string buf_;
+        explicit ConsoleSink(asio::any_io_executor exec);
+
         void handle_write_queue();
         void do_write(std::string&& buffer);
         void close();

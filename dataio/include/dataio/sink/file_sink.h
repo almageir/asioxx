@@ -12,13 +12,18 @@
 
 namespace dataio
 {
-    class FileSink : public Sink
+    class FileSink final
+        : public Sink
+        , public std::enable_shared_from_this<FileSink>
     {
     public:
         explicit FileSink(const asio::any_io_executor& exec, const std::string& path);
         ~FileSink() override;
 
         bool write(std::string message) override;
+
+        FileSink(const FileSink&) = delete;
+        FileSink& operator=(const FileSink&) = delete;
 
     private:
         void handle_write_queue();

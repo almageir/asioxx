@@ -9,6 +9,7 @@
 #include <filesystem>
 #include <iomanip>
 #include <ctime>
+#include <iostream>
 #include <sstream>
 
 namespace
@@ -99,7 +100,7 @@ namespace asynclog
         }
 
         if ((mode & LogMode::Console) == LogMode::Console) {
-            SinkPtr consoleLogger = std::make_shared<dataio::ConsoleSink>(log_backend_->get_executor());
+            SinkPtr consoleLogger = dataio::ConsoleSink::create(log_backend_->get_executor());
             log_backend_->addSink(std::move(consoleLogger));
         }
     }

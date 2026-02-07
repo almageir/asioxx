@@ -1,11 +1,18 @@
+#include <iostream>
+#include <ostream>
 #include <asynclog/scoped_logger.h>
+
+#include <utility>
 
 namespace asynclog {
 
     ScopedLogger::ScopedLogger(std::string_view source, std::shared_ptr<LogManagerInterface> backend)
         : source_{source}
-        , backend_{backend}
-    {}
+        , backend_{std::move(backend)}
+    {
+    }
+
+    ScopedLogger::~ScopedLogger() = default;
 
     void ScopedLogger::info(std::string_view msg) const {
         if (backend_)
