@@ -17,8 +17,9 @@ namespace dataio
         , public std::enable_shared_from_this<FileSink>
     {
     public:
-        explicit FileSink(const asio::any_io_executor& exec, const std::string& path);
         ~FileSink() override;
+
+        static std::shared_ptr<FileSink> create(asio::any_io_executor executor, const std::string& path);
 
         bool write(std::string message) override;
 
@@ -26,6 +27,8 @@ namespace dataio
         FileSink& operator=(const FileSink&) = delete;
 
     private:
+        explicit FileSink(const asio::any_io_executor& exec, const std::string& path);
+
         void handle_write_queue();
         void do_write(std::string&& buffer);
         void close();

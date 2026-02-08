@@ -34,7 +34,6 @@ namespace dataio {
         bool write(std::string message) override;
 
     private:
-        std::string buf_;
         explicit ConsoleSink(asio::any_io_executor exec);
 
         void handle_write_queue();

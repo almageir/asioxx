@@ -95,7 +95,7 @@ namespace asynclog
     void LogManager::open(LogMode mode, std::string_view path) {
         if ((mode & LogMode::File) == LogMode::File) {
             auto unique_file_name = make_unique_file_name(path).string();
-            SinkPtr fileLogger = std::make_shared<dataio::FileSink>(log_backend_->get_executor(), unique_file_name);
+            SinkPtr fileLogger = dataio::FileSink::create(log_backend_->get_executor(), unique_file_name);
             log_backend_->addSink(std::move(fileLogger));
         }
 

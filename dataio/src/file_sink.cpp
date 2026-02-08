@@ -25,6 +25,10 @@ namespace dataio
         is_stopped_ = true;
     }
 
+    std::shared_ptr<FileSink> FileSink::create(asio::any_io_executor executor, const std::string& path) {
+        return std::shared_ptr<FileSink>(new FileSink(std::move(executor), path));
+    }
+
     bool FileSink::write(std::string buffer)
     {
         if (buffer.empty())

@@ -19,6 +19,10 @@ namespace dataio {
         is_stopped_ = true;
     }
 
+    std::shared_ptr<ConsoleSink> ConsoleSink::create(asio::any_io_executor executor) {
+        return std::shared_ptr<ConsoleSink>(new ConsoleSink(std::move(executor)));
+    }
+
     bool ConsoleSink::write(std::string buffer)
     {
         if (buffer.empty())
